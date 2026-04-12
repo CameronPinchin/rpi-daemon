@@ -1,0 +1,7 @@
+#ifndef WHITELIST_H
+#define WHITELIST_H
+
+#define THINKCENTRE_IP_ADDRESS "192.168.2.164"
+#define MACBOOK_IP_ADDRESS "192.168.2.149"
+
+#endif
