@@ -11,6 +11,9 @@
 
 #include <errno.h>
 
+#include "commands.h"
+#include "daemon-master.h" // external functions forward declared here
+
 #define BUFFER_SIZE 64
 #define MAXLINE 128
 
@@ -27,7 +30,7 @@ const struct timeval tv = {1, 0};
  *  - return -1 if err, set errno
  * 
  */
-void send_message(char* arg)
+void send_message(char* arg_0, char* arg_1)
 {
     char buffer[BUFFER_SIZE];
     char* init_message = "coldlake";
@@ -62,7 +65,15 @@ void send_message(char* arg)
         fprintf(stderr, "Error: %s\n", strerror(errno));
         exit(errno);     
     }
-    fprintf( stderr, "[RPI5-DAEMON-CLIENT] CALL TO sendto()             RETURNED [%zd bytes transmitted].\n", bytes_sent );
+    fprintf( stderr, "[RPI5-DAEMON-CLIENT] CALL TO sendto(init)         RETURNED [%zd bytes transmitted].\n", bytes_sent );
+
+    rpi_command cmd = format_message( arg_0, arg_1 );
+    /* TO-DO: Add receiving logic on the side of the server */
+    if( (bytes_sent = sendto(sockfd, (const void*)&cmd, sizeof(cmd), 0, NULL, sizeof(servaddr))) == -1 ) {
+        fprintf(stderr, "Error: %s\n", strerror(errno));
+        exit(errno);     
+    }
+    fprintf( stderr, "[RPI5-DAEMON-CLIENT] CALL TO sendto(cmd)        RETURNED [%zd bytes transmitted].\n", bytes_sent );
 
     if( (bytes_recvd = recvfrom( sockfd, buffer, sizeof(buffer), 0, NULL, NULL)) == -1 ){
         fprintf(stderr, "Error: %s\n", strerror(errno));
@@ -82,19 +93,16 @@ void send_message(char* arg)
 
 }
 
-void get_reply()
-{
 
-}
 
 int main(int argc, char** argv)
 {
-    if(argc < 2){
-        fprintf( stderr, "[RPI5-DAEMON-CLIENT] Error: argument is required.\n" );
+    if(argc < 3){
+        fprintf( stderr, "[RPI5-DAEMON-CLIENT] Error: invalid number of arguments.\n" );
         return -1;
     }
 
-    send_message( argv[1] );
+    send_message( argv[1], argv[2] );
 
     return 0;
 }

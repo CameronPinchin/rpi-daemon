@@ -14,6 +14,8 @@
 #include <pthread.h>
 
 #include "whitelist.h"
+#include "commands.h"
+#include "daemon-master.h"
 
 #define BUFFER_SIZE 64
 #define MAXLINE 128
@@ -25,6 +27,7 @@ static char* expected_init_message = "coldlake";
 //static char* test_expected_init_message = "fail";
 
 static const char* const whitelist_arr[] = { THINKCENTRE_IP_ADDRESS, MACBOOK_IP_ADDRESS };
+
 
 /*  @brief Check if datagram contains expected initialization string. 
  *  
@@ -92,12 +95,19 @@ void* handle_connection(void *arg)
     pthread_exit(NULL);
 }
 
+/* TO-DO: 
+ * - add support for additional argument, i.e., 'status' 'ssh' would run systemctl status sshd
+ * 
+ **/
+
 int main(int argc, char** argv)
 {
     int listenfd;
     struct sockaddr_in servaddr;
     pthread_t handler;
     int thread_ret;
+
+    fprintf( stderr, "[RPI5-DAEMON-SERVER] [DEBUG] A command is of size: %ld bytes.\n", sizeof(_RPI5_SYSTEM_SHUTDOWN) );
 
     memset( &servaddr, 0, sizeof(servaddr) );
     if( (listenfd = socket(AF_INET, SOCK_DGRAM, 0 )) == -1 ) {

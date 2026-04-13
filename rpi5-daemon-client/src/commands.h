@@ -14,8 +14,8 @@
  **/
  
  /*	0. GENERAL	*/
- 	#define _RPI5_SYSTEM_SHUTDOWN				0x1000
- 	#define _RPI5_SYSTEM_RESTART				0x1010
+ 	#define _RPI5_PROC_START					0x1000
+ 	#define _RPI5_PROC_STOP						0x1010
  	
  /*	1. NETWORKING	*/
  
@@ -23,7 +23,9 @@
  	#define _RPI5_NETWORKING_STOP_NET			0x1110	/*	unsure how this signal would get delivered	*/
  	#define _RPI5_NETWORKING_RESTART_NET		0x1120	/*	unsure how this signal would get delivered	*/	
 
- 	#define _RPI5_NETWORKING_START_SSHD			0x1101	/*	MAIN TASK	*/   
+ 	#define _RPI5_PROC_SSHD						0x0131
+	
+	#define _RPI5_NETWORKING_START_SSHD			0x1101	/*	MAIN TASK	*/   
  	#define _RPI5_NETWORKING_STOP_SSHD			0x1111	/*	MAIN TASK	*/	
 	#define _RPI5_NETWORKING_RESTART_SSHD		0x1121	/*	MAIN TASK	*/
 
