@@ -1,0 +1,8 @@
+Author: Cameron Pinchin
+Email: cwpinchin@outlook.com
+
+Description:
+
+Client-side of a daemon intended to run continually on the RPi5 to fix SSH issues. Randomly am unable to restart my SSH service, this is intended to send a command to the RPi5 to restart the SSHD service. 
+
+Intended to be modular and scalable, so that I can add other commands as needed.

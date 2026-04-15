@@ -27,8 +27,7 @@ const struct timeval tv = {1, 0};
 
 /* Initialize a connection with the RPi5 
  *  - return the file descriptor 
- *  - return -1 if err, set errno
- * 
+ *  - return -1 if err, set errno 
  */
 void send_message(char* arg_0, char* arg_1)
 {
@@ -101,8 +100,6 @@ int main(int argc, char** argv)
         fprintf( stderr, "[RPI5-DAEMON-CLIENT] Error: invalid number of arguments.\n" );
         return -1;
     }
-
     send_message( argv[1], argv[2] );
-
     return 0;
 }
