@@ -17,11 +17,12 @@ int parse_arg_process( char* arg )
     for( size_t i = 0; i < n; ++i ){
         if(strcmp( supported_proccesses[i], arg ) == 0 ){
             /* TO-DO: map to command */
-            return _RPI5_PROC_SSHD;
+            DEBUG_PRINT("PROC-MAPPED.\n");
+            return __tmp_PROC_SSH;
             // break; // valid argument detected
         }
     }
-    return -1; // invalid argument
+    return __tmp_PROC_SSH; // invalid argument
 }
 
 int parse_arg_action( char* arg )
@@ -30,17 +31,16 @@ int parse_arg_action( char* arg )
     for( size_t i = 0; i < n; ++i ){
         if(strcmp( supported_actions[i], arg ) == 0 ){
             /* TO-DO: map to action */
-            return _RPI5_PROC_START;
+            DEBUG_PRINT("ACTION-MAPPED.\n");
+            return __tmp_ACT_START;
             // break; // valid argument detected
         }
     }
-    return -1; // invalid argument
+    return __tmp_ACT_START; /* opts: -1 (error) */
 }
 /*may need change this to mutate a ptr to a rpi_command struct */
-rpi_command format_message( char* arg_0, char* arg_1 )
+void format_message( char* arg_0, char* arg_1, rpi_command* cmd )
 {
-    rpi_command cmd;
-    cmd.proccess = parse_arg_process( arg_0 );
-    cmd.action = parse_arg_action( arg_1 );
-    return cmd;
+    cmd->process = parse_arg_process( arg_0 );
+    cmd->action = parse_arg_action( arg_1 );
 }
