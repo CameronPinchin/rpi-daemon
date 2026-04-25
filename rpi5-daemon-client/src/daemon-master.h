@@ -1,17 +1,24 @@
-#ifndef DEAMON_MASTER_H
-#define DEAMON_MASTER_H
+#ifndef DAEMON_MASTER_H
+#define DAEMON_MASTER_H
 
 /* File to be used by both client and server, contains
- *  struct definition 
+ *  struct definition
  **/
 
 typedef struct rpi_command {
-    int proccess;
+    int process;
     int action;
 } rpi_command;
 
+typedef struct client_info {
+    int listenfd;
+    struct sockaddr_in cliaddr;
+    struct rpi_command rpi_command_client;
+} client_info;
+
 /* FORWARD DECLARATIONS */
-rpi_command format_message( char* arg_0, char* arg_1 );
+void format_message( char* arg_0, char* arg_1, rpi_command* cmd );
+void get_status( char* proc );
 
 /* SUPPORTED PROCESSES */
 #define _PROC_SSHD          "sshd"
@@ -22,5 +29,12 @@ rpi_command format_message( char* arg_0, char* arg_1 );
 #define _ACTION_RESTART     "restart"
 #define _ACTION_START       "start"
 #define _ACTION_STOP        "stop"
+
+/* DEBUGGING MACROS */
+#ifdef DEBUG
+#define DEBUG_PRINT(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
+#else
+#define DEBUG_PRINT(fmt, ...)
+#endif
 
 #endif

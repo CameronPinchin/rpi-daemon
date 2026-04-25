@@ -1,5 +1,7 @@
-#ifndef DEAMON_MASTER_H
-#define DEAMON_MASTER_H
+#ifndef DAEMON_MASTER_H
+#define DAEMON_MASTER_H
+
+
 
 /* File to be used by both client and server, contains
  *  struct definition
@@ -18,7 +20,7 @@ typedef struct client_info {
 
 /* FORWARD DECLARATIONS */
 void format_message( char* arg_0, char* arg_1, rpi_command* cmd );
-void get_status( char* proc );
+int get_status( char* proc );
 
 /* SUPPORTED PROCESSES */
 #define _PROC_SSHD          "sshd"

@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <sys/types.h>
+#include <netinet/in.h>
 
 #include "commands.h"
 #include "daemon-master.h"
@@ -38,7 +39,7 @@ int parse_arg_action( char* arg )
     }
     return __tmp_ACT_START; /* opts: -1 (error) */
 }
-/*may need change this to mutate a ptr to a rpi_command struct */
+
 void format_message( char* arg_0, char* arg_1, rpi_command* cmd )
 {
     cmd->process = parse_arg_process( arg_0 );

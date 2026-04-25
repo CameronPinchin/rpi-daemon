@@ -13,15 +13,15 @@
 
 #include <pthread.h>
 
-#include "whitelist.h"					/*  */
-#include "commands.h"					/*  */
-#include "daemon-master.h"				/*  */
+#include "whitelist.h"                  /*  */
+#include "commands.h"                   /*  */
+#include "daemon-master.h"              /*  */
 
-#define BUFFER_SIZE 		64
-#define MAXLINE 			128
+#define BUFFER_SIZE         64
+#define MAXLINE             128
 
-#define RPI_PORT 			5050
-#define TEST_PORT 			5051
+#define RPI_PORT            5050
+#define TEST_PORT           5051
 
 static char* expected_init_message = "coldlake";
 //static char* test_expected_init_message = "fail";
@@ -59,36 +59,34 @@ int validate_connection(struct sockaddr_in *cliaddr)
 
 }
 
-/* thread-function to handle connection processing */
-/* Needs to be supplied the fd and a pointer to the client sockaddr_in struct */
-/* Need to malloc for the listenfd, client sockaddr_in struct*/
-/* Because a threads function can only be passed literal bytes, I need to make a struct */
-
 void* handle_connection(void *arg)
 {
-
-    char *init_reply = "pinetree";
     struct client_info *args = (struct client_info *)arg;
     struct sockaddr_in cliaddr = args->cliaddr;
     struct rpi_command rpi_command_client = args->rpi_command_client;
     int listenfd = args->listenfd;
+    ssize_t bytes_sent;
 
     pid_t tid = gettid();
 
-    char* client_ip_address = inet_ntoa(args->cliaddr.sin_addr);
+    char* client_ip = inet_ntoa(args->cliaddr.sin_addr);
 
-    DEBUG_PRINT("[RPI5-DAEMON-SERVER] [DEBUG] CLIENT-ADDRESS: %s\n", client_ip_address);
-    DEBUG_PRINT("[RPI5-DAEMON-SERVER] {rpi_command_struct received:\n   process: %#x\n    action:%#x\n", rpi_command_client.process, rpi_command_client.action);
+    DEBUG_PRINT("[SERVER] [DEBUG] CLIENT-ADDRESS: %s\n", client_ip);
+    DEBUG_PRINT("[SERVER] {rpi_command_struct received:\n   process: %#x\n    action:%#x}\n", rpi_command_client.process, rpi_command_client.action);
 
-    if( sendto(listenfd, init_reply, strlen(init_reply), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr)) == -1 ) {
+    int tmp_status = get_status( "sshd" );   /* HARDCODED: NEED-TO-REMOVE */
+    uint8_t status = tmp_status ? 1 : 0;
+
+    socklen_t cliaddr_len = sizeof(cliaddr);
+
+    DEBUG_PRINT("[SERVER] SSHD STATUS: %d\n", tmp_status);
+    if( (bytes_sent = sendto(listenfd, &status, sizeof(status), 0, (struct sockaddr *)&cliaddr, cliaddr_len)) == -1 ){
         fprintf(stderr, "Error: %s\n", strerror(errno));
         exit(errno);
     }
 
-    get_status( "ssh" ); /* HARDCODED: NEED-TO-REMOVE */
-
-    DEBUG_PRINT("[RPI5-DAEMON-SERVER] CALL TO sendto()                          RETURNED [%d].\n", 0 );
-    DEBUG_PRINT("(THREAD %ld)[RPI5-DAEMON-SERVER] THREAD TERMINATED          	RETURNED [%d].\n", (long int)tid, 0);
+    DEBUG_PRINT("[SERVER] CALL TO sendto() sent %zd bytes to the client.\n", bytes_sent );
+    DEBUG_PRINT("(THREAD %ld)[SERVER] THREAD TERMINATED             RETURNED [%d].\n", (long int)tid, 0);
     free(arg);
     pthread_exit(NULL);
 }
@@ -100,19 +98,16 @@ int main(int argc, char** argv)
     struct sockaddr_in servaddr, cliaddr;
     pthread_t handler;
     int thread_ret;
-    char buffer[BUFFER_SIZE];
 
-    socklen_t len;
-    ssize_t bytes_recvd;
 
     memset( &servaddr, 0, sizeof(servaddr) );
     if( (listenfd = socket(AF_INET, SOCK_DGRAM, 0 )) == -1 ) {
         fprintf(stderr, "Error: %s\n", strerror(errno));
         exit(errno);
     }
-    DEBUG_PRINT("[RPI5-DAEMON-SERVER] CALL TO socket()                          RETURNED [%d].\n", listenfd);
+    DEBUG_PRINT("[SERVER] CALL TO socket()                          RETURNED [%d].\n", listenfd);
 
-    servaddr.sin_addr.s_addr = htonl;;
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(TEST_PORT); /* opts: RPI_PORT, TEST_PORT */
     servaddr.sin_family = AF_INET;
 
@@ -120,18 +115,24 @@ int main(int argc, char** argv)
         fprintf(stderr, "Error: %s\n", strerror(errno));
         exit(errno);
     }
-    DEBUG_PRINT("[RPI5-DAEMON-SERVER] CALL TO bind()                            RETURNED [%d].\n", 0 );
-
+    DEBUG_PRINT("[SERVER] CALL TO bind()                            RETURNED [%d].\n", 0 );
 
     while(1){
         struct client_info *client_info_struct = malloc(sizeof(struct client_info));
+        socklen_t len;
+        ssize_t bytes_recvd;
+
         if(client_info_struct == NULL){
-            // malloc failed
+            fprintf(stderr, "Error: %s\n", strerror(errno));
+            exit(errno);
         }
 
         client_info_struct->listenfd = listenfd;
-        client_info_struct->cliaddr = cliaddr;
-        if( (bytes_recvd = recvfrom(client_info_struct->listenfd, (void*)&client_info_struct->rpi_command_client, sizeof(client_info_struct->rpi_command_client), 0, (struct sockaddr *)&client_info_struct->cliaddr, &len) == -1 )){
+        client_info_struct->cliaddr = cliaddr; // currently, cliaddr will be uninitialized.
+        len = sizeof(client_info_struct->cliaddr); // the reason it was failing with EINVAL: I hadn't initialized len
+        bytes_recvd == recvfrom(client_info_struct->listenfd, &client_info_struct->rpi_command_client, sizeof(client_info_struct->rpi_command_client), 0, (struct sockaddr *)&client_info_struct->cliaddr, &len);
+
+        if( bytes_recvd == -1 ){
             fprintf(stderr, "Error: %s\n", strerror(errno));
             exit(errno);
         }
@@ -141,9 +142,8 @@ int main(int argc, char** argv)
             fprintf(stderr, "Error: %s\n", strerror(thread_ret));
             exit(thread_ret);
         }
-        DEBUG_PRINT("[RPI5-DAEMON-SERVER] THREAD CREATED()                          RETURNED [%d].\n", thread_ret);
+        DEBUG_PRINT("[SERVER] THREAD CREATED()                          RETURNED [%d].\n", thread_ret);
         pthread_detach(handler);
-
     }
 
     return 0;

@@ -15,8 +15,8 @@
  *   - first defines the process, second defines the action
  **/
 
-#define __tmp_PROC_SSH 0x1000
-#define __tmp_ACT_START 0x2000
+#define _tmp_PROC_SSH 0x1000
+#define _tmp_ACT_START 0x2000
 
 /*	0. GENERAL	*/
 #define _RPI5_SYSTEM_SHUTDOWN				0x1000
