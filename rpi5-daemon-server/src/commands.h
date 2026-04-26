@@ -13,12 +13,12 @@
  *        3.  range_3:        [0x2000, 0x2999]
  *        2.  PROCESSES:      [0x1000, 0x1999]
  *        1.  COMMANDS:       [0x0000, 0x0999]
- *
- *   - first defines the process, second defines the action
  **/
 
 /* ERRORS: [0x9000, 0x9999] */
 #define _RPI5_GENERIC_ERROR                 0x9999
+#define _RPI5_PROC_NOT_FOUND                0x9998
+#define _RPI5_
 
 /* TESTING [0x8000, 0x8999] */
 #define _PROC_TEST                          0x8999

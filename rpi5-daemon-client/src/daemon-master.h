@@ -1,10 +1,6 @@
 #ifndef DAEMON_MASTER_H
 #define DAEMON_MASTER_H
 
-/* File to be used by both client and server, contains
- *  struct definition
- **/
-
 typedef struct rpi_command {
     int process;
     int action;
@@ -18,17 +14,7 @@ typedef struct client_info {
 
 /* FORWARD DECLARATIONS */
 void format_message( const char* arg_0, const char* arg_1, rpi_command* cmd );
-void get_status( char* proc );
-
-/* SUPPORTED PROCESSES */
-// #define _PROC_SSHD          "sshd"
-//#define _PROC_SSH           "ssh"
-
-/* SUPPORTED ACTIONS */
-#define _ACTION_STATUS      "status"
-#define _ACTION_RESTART     "restart"
-#define _ACTION_START       "start"
-#define _ACTION_STOP        "stop"
+int8_t interpret_command( int cmd_proc, int cmd_action );
 
 /* DEBUGGING MACROS */
 #ifdef DEBUG
