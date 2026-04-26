@@ -5,3 +5,9 @@ Started because I wanted to try to restart SSHD on my Pi without plugging in a k
  - Couldn't connect via ssh to Pi.
  - Swiftly became aware that restarting sshd.service isn't going to fix the issue.
  - Continued anyways because its a good project.
+
+This is essentially just a interface for systemctl commands, where the server is hosted on the RPi. 
+The server receives datagrams from clients, that contain a service and an action. 
+  i.e., "./<client_binary> <action> <service>"
+
+The server then tries to run the corresponding command and let the client know if it succeeded or failed.
