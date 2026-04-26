@@ -1,0 +1,7 @@
+@Author CameronPinchin
+
+Personal project, generally for practicing C. 
+Started because I wanted to try to restart SSHD on my Pi without plugging in a keyboard.
+ - Couldn't connect via ssh to Pi.
+ - Swiftly became aware that restarting sshd.service isn't going to fix the issue.
+ - Continued anyways because its a good project.
