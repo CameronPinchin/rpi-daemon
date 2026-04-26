@@ -15,12 +15,20 @@
  *   - first defines the process, second defines the action
  **/
 
-#define __tmp_PROC_SSH 0x1000
-#define __tmp_ACT_START 0x2000
+/* ERRORS: [0x9000, 0x9999] */
+#define _RPI5_GENERIC_ERROR                 0x9999
+
+/* TESTING [0x8000, 0x8999] */
+#define _PROC_TEST                          0x8999
 
 /*	0. GENERAL	*/
-#define _RPI5_SYSTEM_SHUTDOWN				0x1000
-#define _RPI5_SYSTEM_RESTART				0x1010
+#define _RPI5_PROC_STOP                     0x0000
+#define _RPI5_PROC_START                    0x1000
+#define _RPI5_PROC_RESTART                  0x2000
+#define _RPI5_PROC_STATUS                   0x3000
+
+/* 1. PROCESSES */
+#define _PROC_SSHD                          0x0400 /* opts: temp, "sshd", perm: 0x0400*/
 
 /*	1. NETWORKING	*/
 

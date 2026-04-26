@@ -20,11 +20,11 @@ typedef struct client_info {
 
 /* FORWARD DECLARATIONS */
 void format_message( char* arg_0, char* arg_1, rpi_command* cmd );
-int get_status( char* proc );
+int interpret_command( int cmd_proc, int cmd_action );
 
 /* SUPPORTED PROCESSES */
-#define _PROC_SSHD          "sshd"
-#define _PROC_SSH           "ssh"
+//#define _PROC_SSHD          "sshd"
+//#define _PROC_SSH           "ssh"
 
 /* SUPPORTED ACTIONS */
 #define _ACTION_STATUS      "status"

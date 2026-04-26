@@ -9,35 +9,52 @@
 #include "commands.h"
 #include "daemon-master.h"
 
-static const char* const supported_proccesses[] = { _PROC_SSHD, _PROC_SSH };
-static const char* const supported_actions[] = { _ACTION_STATUS, _ACTION_START, _ACTION_STOP, _ACTION_RESTART };
+typedef struct {
+    const char* name;
+    int id;
+} proc_entry;
 
-int parse_arg_process( char* arg )
+static const proc_entry supported_processes[] = {
+    {"sshd", _PROC_SSHD},
+    {"test", _PROC_TEST}
+};
+
+typedef struct {
+    const char* name;
+    int action;
+} action_entry;
+
+static const action_entry supported_actions[] = {
+    {"stop", _RPI5_PROC_STOP},
+    {"start", _RPI5_PROC_START},
+    {"restart", _RPI5_PROC_RESTART},
+    {"status", _RPI5_PROC_STATUS}
+};
+
+/* returns a char */
+int parse_arg_process( const char* arg )
 {
-    size_t n = (sizeof(supported_proccesses)/sizeof(supported_proccesses[0]));
+    size_t n = (sizeof(supported_processes)/sizeof(supported_processes[0]));
     for( size_t i = 0; i < n; ++i ){
-        if(strcmp( supported_proccesses[i], arg ) == 0 ){
-            /* TO-DO: map to command */
-            DEBUG_PRINT("PROC-MAPPED.\n");
-            return __tmp_PROC_SSH;
-            // break; // valid argument detected
+        if(strcmp( supported_processes[i].name, arg ) == 0 ){
+            return supported_processes[i].id;
         }
     }
-    return __tmp_PROC_SSH; // invalid argument
+    return _RPI5_GENERIC_ERROR; // invalid argument
 }
 
-int parse_arg_action( char* arg )
+/* this works dynamically now
+ *      i.e., if the user sends stop, start, status, or restart, it is reflected to the server
+ **/
+int parse_arg_action( const char* arg )
 {
     size_t n = (sizeof(supported_actions)/sizeof(supported_actions[0]));
     for( size_t i = 0; i < n; ++i ){
-        if(strcmp( supported_actions[i], arg ) == 0 ){
-            /* TO-DO: map to action */
-            DEBUG_PRINT("ACTION-MAPPED.\n");
-            return __tmp_ACT_START;
-            // break; // valid argument detected
+        if(strcmp( supported_actions[i].name, arg ) == 0 ){
+            return supported_actions[i].action;
         }
     }
-    return __tmp_ACT_START; /* opts: -1 (error) */
+    return _RPI5_GENERIC_ERROR; // invalid argument
 }
 
 void format_message( char* arg_0, char* arg_1, rpi_command* cmd )
