@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -pthread
+CFLAGS = -Wall -pthread
 CFLAGS_DEBUG = -g -Wall -pthread -DDEBUG
 
 C_FILES = src/main.c src/controller.c

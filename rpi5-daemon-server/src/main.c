@@ -37,15 +37,15 @@ void* handle_connection(void *arg)
     int8_t ret = interpret_command( cmd.process, cmd.action );
     ssize_t bytes_sent;
     char* client_ip = inet_ntoa(args->cliaddr.sin_addr);
-    pid_t tid = gettid();
+    pthread_t tid = pthread_self();
     socklen_t cliaddr_len = sizeof(cliaddr);
 
-    DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) {cmd received: %04x, %04x}\n", (long int)tid, client_ip, cmd.process, cmd.action);
+    DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) {cmd received: %04x, %04x}\n", (unsigned long)tid, client_ip, cmd.process, cmd.action);
     if( (bytes_sent = sendto(listenfd, &ret, sizeof(ret), 0, (struct sockaddr *)&cliaddr, cliaddr_len)) == -1 ){
         fprintf(stderr, "Error: %s\n", strerror(errno));
         exit(errno);
     }
-    DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) Succesfully sent %zd bytes to the client.\n", (long int)tid, client_ip, bytes_sent );
+    DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) Succesfully sent %zd bytes to the client.\n", (unsigned long)tid, client_ip, bytes_sent );
     DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) Cleaning up thread.\n", (long int)tid, client_ip);
     free(arg);
     pthread_exit(NULL);

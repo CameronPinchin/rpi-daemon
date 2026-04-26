@@ -29,7 +29,15 @@
 #define _RPI5_PROC_RESTART                  0x2000
 #define _RPI5_PROC_STATUS                   0x3000
 
+//#define _RPI5_PROC_STOP                   0x0000
+//#define _RPI5_PROC_START                  0x0001
+//#define _RPI5_PROC_RESTART                0x0002
+//#define _RPI5_PROC_STATUS                 0x0003
+
 /* 1. PROCESSES */
+// #define _PROC_SSHD                       0x1000
+
+
 #define _PROC_SSHD                          0x0400 /* opts: temp, "sshd", perm: 0x0400*/
 
 #endif
