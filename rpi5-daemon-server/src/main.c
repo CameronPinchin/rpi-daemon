@@ -55,11 +55,11 @@ void* handle_connection(void *arg)
 int main(int argc, char** argv)
 {
     int listenfd;
+    int thread_ret;
     struct sockaddr_in servaddr, cliaddr;
     pthread_t handler;
-    int thread_ret;
 
-    // initialize sockaddr_in values
+    // initialize sockaddr_in structs
     memset( &servaddr, 0, sizeof(servaddr) );
     memset( &cliaddr, 0, sizeof(cliaddr) );
 
@@ -90,8 +90,8 @@ int main(int argc, char** argv)
         }
 
         client_info_struct->listenfd = listenfd;
-        client_info_struct->cliaddr = cliaddr; // currently, cliaddr will be uninitialized.
-        len = sizeof(client_info_struct->cliaddr); // the reason it was failing with EINVAL: I hadn't initialized len
+        client_info_struct->cliaddr = cliaddr;
+        len = sizeof(client_info_struct->cliaddr);
 
         if( (bytes_recvd = recvfrom(client_info_struct->listenfd, &client_info_struct->rpi_command_client, sizeof(client_info_struct->rpi_command_client), 0, (struct sockaddr *)&client_info_struct->cliaddr, &len)) == -1 ){
             fprintf(stderr, "Error: %s\n", strerror(errno));
@@ -105,6 +105,5 @@ int main(int argc, char** argv)
         DEBUG_PRINT("[SERVER] Successfully created thread.\n");
         pthread_detach(handler);
     }
-
     return 0;
 }
