@@ -24,17 +24,10 @@ typedef struct {
     int action;
 } action_entry;
 
-/*
-static const action_entry supported_actions[] = {
-    {"stop", _RPI5_PROC_STOP},
-    {"start", _RPI5_PROC_START},
-    {"restart", _RPI5_PROC_RESTART},
-    {"status", _RPI5_PROC_STATUS}
-};
-*/
-
-/* map_proc accepts the int value passed from the client */
-/* mapped to a process entry */
+/* @brief Iterates through the supported_processes array for a match to the argument.
+ * @param int cmd_proc: 4-byte command provided by the user.
+ * @return const char*: pointer to an entry in the supported_processes array.
+ **/
 const char* map_proc( int cmd_proc )
 {
     size_t n = sizeof(supported_processes)/sizeof(supported_processes[0]);
@@ -46,10 +39,9 @@ const char* map_proc( int cmd_proc )
     return "NAP";
 }
 
-/* These functions can be combined.
- *  - logically they all do the same thing, can shorten to being more generic by including the action
- *  - and creating the command with that.
- *  - for now though, this will do.
+/* @brief Wrapper-like function for the system() call. [TO-DO: Combine]
+ * @param const char* proc, client-provided process.
+ * @return 0 on success, error other-wise.
  **/
 int8_t get_status( const char* proc )
 {
@@ -66,10 +58,13 @@ int8_t get_status( const char* proc )
     return ret;
 }
 
-/* FOR DEBUGGING, DONT USE '--quiet' FLAG */
-int start_service( const char* proc )
+/* @brief Wrapper-like function for the system() call. [TO-DO: Combine]
+ * @param const char* proc, client-provided process.
+ * @return 0 on success, error other-wise.
+ **/
+int8_t start_service( const char* proc )
 {
-    int ret;
+    int8_t ret;
     char cmd[256];
     snprintf( cmd, sizeof(cmd), "systemctl start --quiet %s", proc ); /* opts: --quiet */
     if( (ret = system(cmd)) == -1 ){
@@ -80,10 +75,13 @@ int start_service( const char* proc )
     return ret;
 }
 
-/* FOR DEBUGGING, DONT USE '--quiet' FLAG */
-int stop_service( const char* proc )
+/* @brief Wrapper-like function for the system() call. [TO-DO: Combine]
+ * @param const char* proc, client-provided process.
+ * @return 0 on success, error other-wise.
+ **/
+int8_t stop_service( const char* proc )
 {
-    int ret;
+    int8_t ret;
     char cmd[256];
     snprintf( cmd, sizeof(cmd), "systemctl stop --quiet %s", proc ); /* opts: --quiet */
     if( (ret = system(cmd)) == -1 ){
@@ -94,10 +92,13 @@ int stop_service( const char* proc )
     return ret;
 }
 
-/* FOR DEBUGGING, DONT USE '--quiet' FLAG */
-int restart_service( const char* proc )
+/* @brief Wrapper-like function for the system() call. [TO-DO: Combine]
+ * @param const char* proc, client-provided process.
+ * @return 0 on success, error other-wise.
+ **/
+int8_t restart_service( const char* proc )
 {
-    int ret;
+    int8_t ret;
     char cmd[256];
     snprintf( cmd, sizeof(cmd), "systemctl restart --quiet %s", proc ); /* opts: --quiet */
     if( (ret = system(cmd)) == -1 ){
@@ -109,8 +110,11 @@ int restart_service( const char* proc )
 }
 
 
-/* interpret_command accepts the int commands from client, passes on to map_proc, map_action */
-int interpret_command( int cmd_proc, int cmd_action )
+/* @brief Front-facing function for the main function.
+ * @param int cmd_proc: 4-byte command provided by user, int cmd_action: 4-byte command provided by user.
+ * @return 0 on success, error other-wise.
+ **/
+int8_t interpret_command( int cmd_proc, int cmd_action )
 {
     const char* proc = map_proc( cmd_proc );
     if(strcmp(proc, "NAP") == 0){
@@ -118,7 +122,7 @@ int interpret_command( int cmd_proc, int cmd_action )
         return -1;
     }
 
-    int ret = -1;
+    int8_t ret = -1;
     switch(cmd_action) {
         case _RPI5_PROC_STOP:
             DEBUG_PRINT("[SERVER] Successfully mapped command to STOP, calling stop_service.\n");

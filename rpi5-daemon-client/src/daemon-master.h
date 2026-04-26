@@ -17,7 +17,7 @@ typedef struct client_info {
 } client_info;
 
 /* FORWARD DECLARATIONS */
-void format_message( char* arg_0, char* arg_1, rpi_command* cmd );
+void format_message( const char* arg_0, const char* arg_1, rpi_command* cmd );
 void get_status( char* proc );
 
 /* SUPPORTED PROCESSES */

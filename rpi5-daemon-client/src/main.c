@@ -25,6 +25,10 @@
 
 const struct timeval tv = {1, 0};
 
+/* @brief Based on the process, action, and response from server, print the result.
+ * @param char* proc: user-provided process, int action: user-provided action, int8_t result: response from server.
+ * @return N/A.
+ **/
 void interpret_results( char* proc, int action, int8_t result)
 {
     fprintf(stderr, "==================================================\n");
@@ -50,6 +54,10 @@ void interpret_results( char* proc, int action, int8_t result)
     fprintf(stderr, "==================================================\n");
 }
 
+/* @brief Connect to open socket based on <target-ip>, ready the message, and send datagram.
+ * @param const char* arg, user provided C-String to send to socket.
+ * @return N/A. Errno printed on failure.
+ **/
 void send_message(char* arg_0, char* arg_1)
 {
     char buffer[BUFFER_SIZE];

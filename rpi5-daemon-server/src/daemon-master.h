@@ -20,7 +20,7 @@ typedef struct client_info {
 
 /* FORWARD DECLARATIONS */
 void format_message( char* arg_0, char* arg_1, rpi_command* cmd );
-int interpret_command( int cmd_proc, int cmd_action );
+int8_t interpret_command( int cmd_proc, int cmd_action );
 
 /* SUPPORTED PROCESSES */
 //#define _PROC_SSHD          "sshd"

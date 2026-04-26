@@ -13,9 +13,9 @@
 
 #include <pthread.h>
 
-#include "whitelist.h"                  /*  */
-#include "commands.h"                   /*  */
-#include "daemon-master.h"              /*  */
+#include "whitelist.h"
+#include "commands.h"
+#include "daemon-master.h"
 
 #define BUFFER_SIZE         64
 #define MAXLINE             128
@@ -23,6 +23,10 @@
 #define RPI_PORT            5050
 #define TEST_PORT           5051
 
+/* @brief Thread-routine for connection handling.
+ * @param void *arg, pointer to a memory-address containing client information.
+ * @return N/A.
+ **/
 void* handle_connection(void *arg)
 {
     // TO-DO: Clean up variable declaration: it looks messy.
@@ -37,12 +41,10 @@ void* handle_connection(void *arg)
     socklen_t cliaddr_len = sizeof(cliaddr);
 
     DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) {cmd received: %04x, %04x}\n", (long int)tid, client_ip, cmd.process, cmd.action);
-    DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) SSHD STATUS: %d\n", (long int)tid, client_ip, ret);
     if( (bytes_sent = sendto(listenfd, &ret, sizeof(ret), 0, (struct sockaddr *)&cliaddr, cliaddr_len)) == -1 ){
         fprintf(stderr, "Error: %s\n", strerror(errno));
         exit(errno);
     }
-
     DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) Succesfully sent %zd bytes to the client.\n", (long int)tid, client_ip, bytes_sent );
     DEBUG_PRINT("(THREAD %ld)[SERVER](c:%s) Cleaning up thread.\n", (long int)tid, client_ip);
     free(arg);

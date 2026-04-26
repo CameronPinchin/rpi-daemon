@@ -31,7 +31,10 @@ static const action_entry supported_actions[] = {
     {"status", _RPI5_PROC_STATUS}
 };
 
-/* returns a char */
+/* @brief Parse user-input and return the process.
+ * @param const char* arg, user provided C-String to parse.
+ * @return Return one of the defined processes found in commands.h.
+ **/
 int parse_arg_process( const char* arg )
 {
     size_t n = (sizeof(supported_processes)/sizeof(supported_processes[0]));
@@ -43,8 +46,9 @@ int parse_arg_process( const char* arg )
     return _RPI5_GENERIC_ERROR; // invalid argument
 }
 
-/* this works dynamically now
- *      i.e., if the user sends stop, start, status, or restart, it is reflected to the server
+/* @brief Parse user-input and return the command.
+ * @param const char* arg, user provided C-String to parse.
+ * @return Return one of the defined commands found in commands.h.
  **/
 int parse_arg_action( const char* arg )
 {
@@ -57,7 +61,11 @@ int parse_arg_action( const char* arg )
     return _RPI5_GENERIC_ERROR; // invalid argument
 }
 
-void format_message( char* arg_0, char* arg_1, rpi_command* cmd )
+/* @brief Provides a clean front-end for my main function.
+ * @param const char* arg_0, arg_1, user-provided C-Strings to forward to parsing functions, populating the rpi_command struct cmd is pointing to.
+ * @return N/A
+ **/
+void format_message( const char* arg_0, const char* arg_1, rpi_command* cmd )
 {
     cmd->process = parse_arg_process( arg_0 );
     cmd->action = parse_arg_action( arg_1 );
