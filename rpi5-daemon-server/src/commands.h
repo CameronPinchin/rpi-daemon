@@ -38,6 +38,6 @@
 // #define _PROC_SSHD                       0x1000
 
 
-#define _PROC_SSHD                          0x0400 /* opts: temp, "sshd", perm: 0x0400*/
+#define _PROC_SSH                           0x0400 /* opts: temp, "sshd", perm: 0x0400*/
 
 #endif

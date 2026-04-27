@@ -58,16 +58,16 @@ void interpret_results( char* proc, int action, int8_t result)
  * @param const char* arg, user provided C-String to send to socket.
  * @return N/A. Errno printed on failure.
  **/
-void send_message(char* arg_0, char* arg_1)
+void send_message(char* arg_0, char* arg_1, char* arg_2 )
 {
     char buffer[BUFFER_SIZE];
-    //char* init_message = "coldlake";
     int sockfd;
+    int block_time = 3;
     struct sockaddr_in servaddr;
     ssize_t bytes_recvd, bytes_sent;
 
     memset( &servaddr, 0 , sizeof(servaddr) );
-    servaddr.sin_addr.s_addr = inet_addr( TEST_IP_ADDRESS );    /* opts: RPI_IP_ADDRESS, TEST_IP_ADDRESS    */
+    servaddr.sin_addr.s_addr = inet_addr( RPI_IP_ADDRESS );    /* opts: RPI_IP_ADDRESS, TEST_IP_ADDRESS    */
     servaddr.sin_port = htons( TEST_PORT );                     /* opts: RPI_PORT, TEST_PORT                */
     servaddr.sin_family = AF_INET;
 
@@ -99,9 +99,14 @@ void send_message(char* arg_0, char* arg_1)
     }
     DEBUG_PRINT("[CLIENT] Call to sendto successfully transmitted %zd bytes.\n", bytes_sent );
 
-    for(int i = 0; i < 5; ++i){
+    if( arg_2 != NULL ){
+        block_time = atoi(arg_2);
+        DEBUG_PRINT("[CLIENT] Client provided %d seconds of blocking time for server-response.\n", block_time);
+    }
+
+    for(int i = 0; i < block_time; ++i){
         if( (bytes_recvd = recvfrom( sockfd, &buffer, sizeof(buffer), 0, NULL, NULL)) == -1 ){
-            fprintf(stderr, "Warning: [%s] - Could not receive message from server.\n", strerror(errno));
+            fprintf(stderr, "Warning: [%s] - Could not receive message from server on try: %d of %d.\n", strerror(errno), (i+1), block_time);
         } else {
             break;
         }
@@ -115,10 +120,28 @@ void send_message(char* arg_0, char* arg_1)
 
 int main(int argc, char** argv)
 {
-    if(argc < 3){
-        fprintf( stderr, "[CLIENT] Error: invalid number of arguments.\n" );
-        return -1;
+    switch (argc) {
+        case 3:
+            send_message( argv[1], argv[2], NULL );
+            break;
+        case 4:
+            send_message( argv[1], argv[2], argv[3] );
+            break;
+        default:
+            fprintf( stderr, "[CLIENT] Error: invalid number of arguments.\n" );
+            fprintf( stderr, "[CLIENT] To run the binary, use format: ./<binary> <process> <action> <optional-block-time>");
+            return -1;
     }
-    send_message( argv[1], argv[2] );
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+

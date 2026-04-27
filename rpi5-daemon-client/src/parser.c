@@ -15,7 +15,7 @@ typedef struct {
 } proc_entry;
 
 static const proc_entry supported_processes[] = {
-    {"sshd", _PROC_SSHD},
+    {"ssh", _PROC_SSH},
     {"test", _PROC_TEST}
 };
 

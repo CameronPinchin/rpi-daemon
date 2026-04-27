@@ -1,0 +1,15 @@
+[Unit]
+Description=RPi-5 Daemon module that waits for client-connections to issue commands
+# Ensures the network is ready if your binary needs it
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/server_arm64
+# Automatic restart on binary crash.
+Restart=always
+RestartSec=5
+
+[Install]
+# Links the service to the standard multi-user boot target
+WantedBy=multi-user.target

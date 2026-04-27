@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -69,8 +68,8 @@ int main(int argc, char** argv)
     }
     DEBUG_PRINT("[SERVER] Call to socket succeeded.\n");
 
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    servaddr.sin_port = htons(TEST_PORT); /* opts: RPI_PORT, TEST_PORT */
+    servaddr.sin_addr.s_addr = htonl( INADDR_ANY );
+    servaddr.sin_port = htons( TEST_PORT ); /* opts: RPI_PORT, TEST_PORT */
     servaddr.sin_family = AF_INET;
 
     if( bind( listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr) ) == -1 ) {

@@ -15,7 +15,7 @@ typedef struct {
 } proc_entry;
 
 static const proc_entry supported_processes[] = {
-    {"sshd", _PROC_SSHD},
+    {"ssh", _PROC_SSH},
     {"test", _PROC_TEST}
 };
 
@@ -53,7 +53,8 @@ int8_t get_status( const char* proc )
         fprintf(stderr, "Error: %s\n", strerror(errno));
         return -1;
     }
-    ret = (ret == 768) ? 1 : 0; // system(cmd) call returns 768 due to metadata, can either bitshift or do this
+
+    ret = (ret > 0) ? 1 : 0; // system(cmd) call returns 768 due to metadata, can either bitshift or do this
     DEBUG_PRINT("[SERVER] get_status, return value: %d\n", ret );
     return ret;
 }

@@ -28,6 +28,6 @@
 #define _RPI5_PROC_STATUS                   0x3000
 
 /* 1. PROCESSES */
-#define _PROC_SSHD                          0x0400 /* opts: temp, "sshd", perm: 0x0400*/
+#define _PROC_SSH                           0x0400 /* opts: temp, "sshd", perm: 0x0400*/
 
 #endif
