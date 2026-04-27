@@ -28,7 +28,8 @@ static const action_entry supported_actions[] = {
     {"stop", _RPI5_PROC_STOP},
     {"start", _RPI5_PROC_START},
     {"restart", _RPI5_PROC_RESTART},
-    {"status", _RPI5_PROC_STATUS}
+    {"status", _RPI5_PROC_STATUS},
+    {"failed", _RPI5_PROC_FAILED}
 };
 
 /* @brief Parse user-input and return the process.

@@ -49,6 +49,10 @@ void interpret_results( char* proc, int action, int8_t result)
             fprintf(stderr, "The STATUS call to %s.service returned with %d\n", proc, result);
             fprintf(stderr, "Result-Table: {0: active, 1: in-active}\n");
             break;
+        case _RPI5_PROC_FAILED:
+            fprintf(stderr, "The STATUS call to %s.service returned with %d\n", proc, result);
+            fprintf(stderr, "Result-Table: {0: failed, 1: no fail}\n");
+            break;
         default:
     }
     fprintf(stderr, "==================================================\n");

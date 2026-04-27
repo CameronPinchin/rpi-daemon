@@ -110,6 +110,23 @@ int8_t restart_service( const char* proc )
     return ret;
 }
 
+/* @brief Wrapper-like function for the system() call. [TO-DO: Combine]
+ * @param const char* proc, client-provided process.
+ * @return 0 on success, error other-wise.
+ **/
+int8_t failed_service( const char* proc )
+{
+    int8_t ret;
+    char cmd[256];
+    snprintf( cmd, sizeof(cmd), "systemctl is-failed --quiet %s", proc ); /* opts: --quiet */
+    if( (ret = system(cmd)) == -1 ){
+        fprintf(stderr, "Error: %s\n", strerror(errno));
+        exit(errno);
+    }
+    DEBUG_PRINT("[SERVER] restart_service, return value: %d\n", ret );
+    return ret;
+}
+
 
 /* @brief Front-facing function for the main function.
  * @param int cmd_proc: 4-byte command provided by user, int cmd_action: 4-byte command provided by user.
@@ -140,6 +157,10 @@ int8_t interpret_command( int cmd_proc, int cmd_action )
         case _RPI5_PROC_STATUS:
             DEBUG_PRINT("[SERVER] Successfully mapped command to STATUS, calling get_status.\n");
             ret = get_status(proc);
+            break;
+        case _RPI5_PROC_FAILED:
+            DEBUG_PRINT("[SERVER] Successfully mapped command to STATUS, calling failed_service.\n");
+            ret = failed_service(proc);
             break;
         default:
             ret = -1;

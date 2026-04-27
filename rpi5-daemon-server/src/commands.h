@@ -1,5 +1,11 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
+/* TO-DO:
+ *   - currently maintaining two versions of this file, for the client and the server.
+ *   - This adds work for no benefit, change to a singular file for both client and server to avoid headaches.
+ **/
+
+
 /* RPI5 Commands
  *   Poorly designed at the moment
  *         - Make ranges:
@@ -28,11 +34,13 @@
 #define _RPI5_PROC_START                    0x1000
 #define _RPI5_PROC_RESTART                  0x2000
 #define _RPI5_PROC_STATUS                   0x3000
+#define _RPI5_PROC_FAILED                   0x0004
 
-//#define _RPI5_PROC_STOP                   0x0000
-//#define _RPI5_PROC_START                  0x0001
-//#define _RPI5_PROC_RESTART                0x0002
-//#define _RPI5_PROC_STATUS                 0x0003
+// #define _RPI5_PROC_STOP                   0x0000
+// #define _RPI5_PROC_START                  0x0001
+// #define _RPI5_PROC_RESTART                0x0002
+// #define _RPI5_PROC_STATUS                 0x0003
+// #define _RPI5_PROC_FAILED                 0x0004
 
 /* 1. PROCESSES */
 // #define _PROC_SSHD                       0x1000
