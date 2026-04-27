@@ -12,8 +12,7 @@ The server receives datagrams from clients, that contain a service and an action
 
 The server then tries to run the corresponding command and let the client know if it succeeded or failed.
 
-POSIX-compliant, but not portable. The commands rely on the systemctl to interface with the systemd service
-manager, which is Linux-specific. Otherwise, everything is POSIX-compliant.
+POSIX-compliant, but not portable. The commands rely on the systemctl to interface with the systemd service manager, which is Linux-specific. Otherwise, everything is POSIX-compliant.
 
 To enable this daemon to be launched at boot-time, do the following:
 
