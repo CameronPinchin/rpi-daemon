@@ -19,7 +19,7 @@ To enable this daemon to be launched at boot-time, do the following:
 1. Make any desired modifications to the rpi5daemon.service file.
 
 2. Save the file to "/etc/systemd/system/server_arm64.service"
-  # mv ${PROJECT_DIRECTORY}/rpi5daemon.service /etc/systemd/system/server_arm64
+  # mv ${PROJECT_DIRECTORY}/rpi5daemon.service /etc/systemd/system/rpi5daemon.service
 
 3. Move the server_arm64 binary to your "/usr/bin" path.
   # mv ${PROJECT_DIRECTORY}/rpi5-daemon-server/bin/server_arm64 /usr/bin
