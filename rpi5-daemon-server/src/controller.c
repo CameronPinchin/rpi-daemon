@@ -9,34 +9,59 @@
 #include "commands.h"
 #include "daemon-master.h"
 
-typedef struct {
-    const char* name;
-    int id;
-} proc_entry;
-
-static const proc_entry supported_processes[] = {
-    {"ssh", _PROC_SSH},
-    {"test", _PROC_TEST}
-};
-
-typedef struct {
-    const char* name;
-    int action;
-} action_entry;
-
+/* Reimplement this function with a switch-case statement. Faster than iteration due to */
 /* @brief Iterates through the supported_processes array for a match to the argument.
  * @param int cmd_proc: 4-byte command provided by the user.
  * @return const char*: pointer to an entry in the supported_processes array.
  **/
 const char* map_proc( int cmd_proc )
 {
-    size_t n = sizeof(supported_processes)/sizeof(supported_processes[0]);
-    for(size_t i = 0; i < n; ++i){
-        if( supported_processes[i].id == cmd_proc ){
-            return supported_processes[i].name;
-        }
+    switch( cmd_proc ) {
+        case _PROC_SSH:
+            return "ssh";
+        case _PROC_TEST:
+            return "test";
+        default:
+            return NULL;
     }
-    return "NAP";
+}
+
+const char* map_cmd( int action )
+{
+    switch(action) {
+        case _RPI5_PROC_STOP:
+            return "stop";
+        case _RPI5_PROC_START:
+            return "start";
+        case _RPI5_PROC_RESTART:
+            return "restart";
+        case _RPI5_PROC_STATUS:
+            return "is-active";
+        case _RPI5_PROC_FAILED:
+            return "is-failed";
+        default:
+            return NULL;
+    }
+}
+
+/* @brief Wrapper-like function for the system() call. [TO-DO: Combine]
+ * @param const char* proc, client-provided process.
+ * @return 0 on success, error other-wise.
+ **/
+int8_t run_command( const char* proc, const char* action )
+{
+    int ret;
+    char cmd[256];
+
+    snprintf(cmd, sizeof(cmd), "systemctl %s --quiet %s", action, proc);
+    if( (ret = system(cmd)) == -1 ){
+        fprintf(stderr, "Error: %s\n", strerror(errno));
+        return -1;
+    }
+
+    ret = (ret > 0) ? 1 : 0; // system(cmd) call returns 768 due to metadata, can either bitshift or do this
+    DEBUG_PRINT("[SERVER] run_command, return value: %d\n", ret );
+    return ret;
 }
 
 /* @brief Wrapper-like function for the system() call. [TO-DO: Combine]
@@ -135,35 +160,12 @@ int8_t failed_service( const char* proc )
 int8_t interpret_command( int cmd_proc, int cmd_action )
 {
     const char* proc = map_proc( cmd_proc );
-    if(strcmp(proc, "NAP") == 0){
-        fprintf(stderr, "[SERVER] Error, proc mapped to NAP: Not-a-process.\n");
+    const char* action = map_cmd( cmd_action );
+    if( proc == NULL || action == NULL ){
+        fprintf(stderr, "[SERVER] Error, 'proc' or 'action' is NULL. Ensure entries are valid before trying again.\n");
         return -1;
     }
 
-    int8_t ret = -1;
-    switch(cmd_action) {
-        case _RPI5_PROC_STOP:
-            DEBUG_PRINT("[SERVER] Successfully mapped command to STOP, calling stop_service.\n");
-            ret = stop_service(proc);
-            break;
-        case _RPI5_PROC_START:
-            DEBUG_PRINT("[SERVER] Successfully mapped command to START, calling start_service.\n");
-            ret = start_service(proc);
-            break;
-        case _RPI5_PROC_RESTART:
-            DEBUG_PRINT("[SERVER] Successfully mapped command to RESTART, calling restart_service.\n");
-            ret = restart_service(proc);
-            break;
-        case _RPI5_PROC_STATUS:
-            DEBUG_PRINT("[SERVER] Successfully mapped command to STATUS, calling get_status.\n");
-            ret = get_status(proc);
-            break;
-        case _RPI5_PROC_FAILED:
-            DEBUG_PRINT("[SERVER] Successfully mapped command to STATUS, calling failed_service.\n");
-            ret = failed_service(proc);
-            break;
-        default:
-            ret = -1;
-    }
+    int8_t ret = run_command( proc, action );
     return ret;
 }
