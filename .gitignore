@@ -1,4 +1,3 @@
 # scratch.txt are for scratch notes, dont include for obvious reasons 
-*.txt
 rpi5-daemon-client/bin/*
 rpi5-daemon-server/bin/*

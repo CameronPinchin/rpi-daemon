@@ -1,0 +1,10 @@
+NOTES:
+
+- Instead of having a server running 24/7 waiting for a command that will occasionally come, have it come alive for ~5 minutes every hour?
+ - probably could just set up a message queue of some form?
+- over complication? --> how costly is that on a pi? 
+
+
+- TEST: 
+    - RUN server on RPI5, run HTOP in separate session. -
+    - how tf am i supposed to do that w/out the ability to connect to the pi lol
